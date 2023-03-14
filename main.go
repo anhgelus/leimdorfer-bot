@@ -16,6 +16,10 @@ func main() {
 	Discord, err := discordgo.New("Bot " + os.Args[1])
 
 	Discord.AddHandler(event.HandleMessages)
+	Discord.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+		err = s.UpdateWatchStatus(0, "Get Leimdorfered!")
+		utils.HandlePanic(err)
+	})
 	Discord.Identify.Intents = discordgo.IntentsGuildMessages
 
 	utils.HandlePanic(err)
