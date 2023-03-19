@@ -29,6 +29,7 @@ func handleDuCoup(s *discordgo.Session, m *discordgo.MessageCreate) {
 	rand.NewSource(time.Now().UnixNano())
 	v := rand.Intn(len(Replacers))
 	msg := utils.NewCaseInsensitiveReplacer("du coup", Replacers[v]).Replace(m.Content)
+	msg = utils.DisablePing(msg, m.Mentions)
 	ref := discordgo.MessageReference{MessageID: m.ID, ChannelID: m.ChannelID, GuildID: guildID}
 	_, err := s.ChannelMessageSendReply(m.ChannelID, msg, &ref)
 	utils.HandlePanic(err)
