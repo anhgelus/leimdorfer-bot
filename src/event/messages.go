@@ -30,6 +30,7 @@ func handleDuCoup(s *discordgo.Session, m *discordgo.MessageCreate) {
 	v := rand.Intn(len(Replacers))
 	msg := utils.NewCaseInsensitiveReplacer("du coup", Replacers[v]).Replace(m.Content)
 	msg = utils.DisablePing(msg, m.Mentions)
+	msg = "Monsieur/Madame " + m.Author.Mention() + ", " + msg
 	ref := discordgo.MessageReference{MessageID: m.ID, ChannelID: m.ChannelID, GuildID: guildID}
 	_, err := s.ChannelMessageSendReply(m.ChannelID, msg, &ref)
 	utils.HandlePanic(err)
@@ -37,6 +38,8 @@ func handleDuCoup(s *discordgo.Session, m *discordgo.MessageCreate) {
 	user := users.GetUser(m.Author, m.GuildID)
 	user.Warning += 1
 	user.Save()
+	err = s.ChannelMessageDelete(ref.ChannelID, ref.MessageID)
+	utils.HandlePanic(err)
 
 	// Check if we must time out the user
 	if user.Warning != 5 {
